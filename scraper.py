@@ -24,6 +24,17 @@ def get_raw_data(howManyMatches, highestMatchID):
             json.dump(rawMatches, outfile)
     return rawMatches
 
+def parse_data(rawMatches):
+    '''
+        This function takes the rawMatches, iterates through it, and gets the match_id, radiant_win, radiant_team and dire_team variables
+        It then stores them in a list of dictionaries where one dictionary is one match
+    '''
+    matches = []
+    for match in rawMatches:
+        newMatch = {}
+        newMatch["match_id"], newMatch["radiant_win"], newMatch["radiant_team"], newMatch["dire_team"] = match["match_id"], match["radiant_win"], match["radiant_team"], match["dire_team"]
+
+
 
 rawMatches = get_raw_data(200, "") # highestMatchID is blank because the current matchids of the current matches could change
 

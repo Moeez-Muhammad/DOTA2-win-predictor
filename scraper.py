@@ -1,7 +1,7 @@
 import requests
 import simplejson as json
 #4152438307
-def get_raw_data(howManyMatches, highestMatchID):
+def get_raw_data(howManyMatches, highestMatchID=""):
     '''
     ///MUST READ TO UNDERSTAND CODE AND COMMENTS///
 
@@ -20,7 +20,7 @@ def get_raw_data(howManyMatches, highestMatchID):
         matchSet = json.loads(response.content) # Get the json of the response data
         rawMatches = rawMatches + matchSet # Concatenate new data with existing data
         highestMatchID = matchSet[0]["match_id"] # Get new highest matchid from the first match
-        with open('test.json', 'w') as outfile:
+        with open('raw_matches.json', 'w') as outfile:
             json.dump(rawMatches, outfile)
     return rawMatches
 
@@ -32,11 +32,16 @@ def parse_data(rawMatches):
     matches = []
     for match in rawMatches:
         newMatch = {}
-        newMatch["match_id"], newMatch["radiant_win"], newMatch["radiant_team"], newMatch["dire_team"] = match["match_id"], match["radiant_win"], match["radiant_team"], match["dire_team"]
+        newMatch["radiant_win"], newMatch["radiant_team"], newMatch["dire_team"] = match["radiant_win"], match["radiant_team"], match["dire_team"]
+        matches.append(newMatch)
+    with open('matches.json', 'w') as outfile:
+        json.dump(matches, outfile)
+    return matches
 
 
 
-rawMatches = get_raw_data(200, "") # highestMatchID is blank because the current matchids of the current matches could change
+rawMatches = get_raw_data(200) # highestMatchID is blank because the current matchids of the current matches could change
+print(parse_data(rawMatches))
 
 # We need to get these main things: matchid, who wins, and what heroes were in the matchid
 # We gather first 100 through standard GET and then get the rest using less than this match id parameter

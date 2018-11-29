@@ -21,26 +21,27 @@ def get_raw_data(matches_requested):
 def parse_data(match_ids):
     rawMatches = []
     matches = []
+    results = []
     for match_id in match_ids:
         rawMatches.append(api.get_match_details(match_id=match_id))
     for match in rawMatches:
         newMatch = {}
+        newResult = []
         radiant_team = []
         dire_team = []
         players = match["players"]
         for player in players:
             if player["player_slot"] in radiant_team_slots:
-                radiant_team.append(player["hero_id"])
+                newMatch["radiant-" + str(player["hero_id"])] = True
             elif player["player_slot"] in dire_team_slots:
                 dire_team.append(player["hero_id"])
+                newMatch["dire-" + str(player["hero_id"])] = True
 
-        newMatch["radiant_win"], newMatch["radiant_team"], newMatch["dire_team"] = match["radiant_win"], radiant_team, dire_team
+        newResult.append(match["radiant_win"])
         matches.append(newMatch)
+        results.append(newResult)
     with open('matches.json', 'a') as outfile:
         json.dump(matches, outfile)
-    return matches
-
-
-initialise()
-rawMatches = get_raw_data(matches_requested=1000) # highestMatchID is blank because the current matchids of the current matches could change
-print(parse_data(rawMatches))
+    with open('results.json', 'a') as outfile:
+        json.dump(results, outfile)
+    return matches, results

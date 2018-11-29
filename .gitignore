@@ -2,9 +2,13 @@
 matches.json
 raw_matches.json
 test.json
+results.json
 
 # VScode folder
 .vscode/
 
 # API key
 apikey
+
+# __pycache__
+__pycache__/

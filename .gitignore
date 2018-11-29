@@ -6,3 +6,5 @@ test.json
 # VScode folder
 .vscode/
 
+# API key
+apikey

@@ -2,3 +2,7 @@
 matches.json
 raw_matches.json
 test.json
+
+# VScode folder
+.vscode/
+

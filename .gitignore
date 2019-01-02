@@ -4,6 +4,10 @@ raw_matches.json
 test.json
 results.json
 
+log
+# Use this file to run tests during development
+test.py
+
 # VScode folder
 .vscode/
 

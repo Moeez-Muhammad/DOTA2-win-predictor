@@ -9,11 +9,10 @@ import scraper
 
 scraper.initialise()
 rawdata = scraper.get_raw_data(matches_requested=1000)
-matches, results = scraper.parse_data(rawdata)
-vec = DictVectorizer()
-matches = vec.fit_transform(matches)
+matches, results = scraper.parse_data(rawdata, scraper.get_hero_ids())
+print(len(matches), len(results))
 
-matches_train, matches_test, results_train, results_test = train_test_split(matches, results, test_size=0.70)
+matches_train, matches_test, results_train, results_test = train_test_split(matches, results, test_size=0.50)
 
 logistic_regression = LogisticRegression(solver='lbfgs')
 logistic_regression = logistic_regression.fit(matches_train, results_train)

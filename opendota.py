@@ -49,10 +49,43 @@ class API:
 		matches = matches.iloc[0:matches_requested]
 		
 		return matches
+	
+	def get_heroes(self):
+		url = self.OPENDOTA_URL + 'heroes'
+		r = requests.get(url)
+		jsons = json.loads(r.content)
+		self.heroes = jsons
 
-	def parse_matches_for_ml(self, matches):
-		if type(matches) != pandas.core.frame.DataFrame:
+		return jsons
+	
+	def generate_hero_dict(self):
+		'''Generate a dictionary mapping hero ids to 0-based index values'''
+		if not self.heroes:
+			raise NameError("Run get_heroes() to generate a json of the heroes first, then run generate_hero_dict()")
+		heroes = self.heroes
+		heroes_dict = {}
+		n = 0
+		for hero in heroes:
+			heroes_dict[hero["id"]] = n
+			n += 1
+		self.heroes_dict = heroes_dict
+		return heroes_dict
+			
+		
+
+	def parse_matches_for_ml(self, matches=None, file=None):
+		if file:
+			matches_json = json.load(file)
+			matches = pandas.io.json.json_normalize(matches_json)
+		elif type(matches) != pandas.core.frame.DataFrame:
 			raise TypeError("Matches should be pandas DataFrame")
+		
+		matches_output = []
+		results_output = []
+		for index, row in matches.iterrows():
+			print(row)
+			
+			
 
 
 

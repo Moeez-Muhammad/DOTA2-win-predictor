@@ -8,7 +8,6 @@ from sklearn.feature_extraction import DictVectorizer
 import scraper
 import json
 
-
 with open('matches.json', 'r') as matchesfile:
 	matches = json.load(matchesfile)
 with open('results.json') as resultsfile:

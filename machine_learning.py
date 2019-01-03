@@ -6,10 +6,13 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction import DictVectorizer
 import scraper
+import json
 
-scraper.initialise()
-rawdata = scraper.get_raw_data(matches_requested=1000)
-matches, results = scraper.parse_data(rawdata, scraper.get_hero_ids())
+
+with open('matches.json', 'r') as matchesfile:
+	matches = json.load(matchesfile)
+with open('results.json') as resultsfile:
+	results = json.load(resultsfile)
 print(len(matches), len(results))
 
 matches_train, matches_test, results_train, results_test = train_test_split(matches, results, test_size=0.50)

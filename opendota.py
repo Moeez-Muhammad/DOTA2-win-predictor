@@ -74,9 +74,9 @@ class API:
 		self.heroes_dict = heroes_dict
 		return heroes_dict
 
-	def parse_matches_for_ml(self, matches=None, file=None):
-		if file:
-			matches_json = json.load(file)
+	def parse_matches_for_ml(self, matches=None, file_input=None, file_outputs=None, append=False):
+		if file_input:
+			matches_json = json.load(file_input)
 			matches = pandas.io.json.json_normalize(matches_json)
 		elif type(matches) != pandas.core.frame.DataFrame:
 			raise TypeError("Matches should be pandas DataFrame")
@@ -99,5 +99,16 @@ class API:
 			if row.loc["radiant_win"] == True:
 				results_output.append(1)
 			else: results_output.append(0)
+		
+		if file_outputs:
+			if append:
+				matches_outputf = open(file_outputs[0], 'a+')
+				results_outputf = open(file_outputs[1], 'a+')
+			else:
+				matches_outputf = open(file_outputs[0], 'w+')
+				results_outputf = open(file_outputs[1], 'w+')
+			json.dump(matches_output, matches_outputf)
+			json.dump(results_output, results_outputf)
+
 		
 		return matches_output, results_output

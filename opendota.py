@@ -12,7 +12,7 @@ class API:
 
 	def __init__(self, apikey=None):
 		if not apikey:
-			self.wait = 1
+			self.wait = 2
 		else: wait = 0
 
 	def get_public_matches(self, less_than_match_id=None, mmr_ascending=None, mmr_descending=None):
@@ -37,17 +37,22 @@ class API:
 		if matches_requested % 100 != 0:
 			raise ValueError("matches_requested should be a multiple of 100")
 		while matches_found < matches_requested:
-			jsons = self.get_public_matches(less_than_match_id)
-			current_match_id = jsons[-1]['match_id']
+			try:
+				jsons = self.get_public_matches(less_than_match_id)
+				current_match_id = jsons[-1]['match_id']
 
-			current_dataframe = pandas.io.json.json_normalize(jsons)
-			current_dataframe = current_dataframe[columns]  # Get only columns specified
-			# Remove low mmr games
-			current_dataframe = current_dataframe.loc[current_dataframe["avg_mmr"] > min_mmr]
+				current_dataframe = pandas.io.json.json_normalize(jsons)
+				current_dataframe = current_dataframe[columns]  # Get only columns specified
+				# Remove low mmr games
+				current_dataframe = current_dataframe.loc[current_dataframe["avg_mmr"] > min_mmr]
 
-			matches_found += len(current_dataframe)
-			matches = matches.append(current_dataframe, ignore_index=True)
-			sleep(self.wait)
+				matches_found += len(current_dataframe)
+				print(matches_found)
+				matches = matches.append(current_dataframe, ignore_index=True)
+				sleep(self.wait)
+			except:
+				print("Error")
+				continue
 		matches = matches.iloc[0:matches_requested]
 
 		return matches
@@ -102,8 +107,13 @@ class API:
 		
 		if file_outputs:
 			if append:
-				matches_outputf = open(file_outputs[0], 'a+')
-				results_outputf = open(file_outputs[1], 'a+')
+				matches_outputf = open(file_outputs[0], 'w+')
+				results_outputf = open(file_outputs[1], 'w+')
+				old_matches = json.load(matches_outputf)
+				matches_output = matches_output + old_matches
+				old_results = json.load(results_outputf)
+				results_output = results_output + old_results
+				
 			else:
 				matches_outputf = open(file_outputs[0], 'w+')
 				results_outputf = open(file_outputs[1], 'w+')

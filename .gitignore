@@ -5,6 +5,7 @@ test.json
 results.json
 matchestest.json
 resultstest.json
+dtree.dot
 
 log
 # Use this file to run tests during development

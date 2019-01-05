@@ -34,8 +34,8 @@ class API:
 		matches_found = 0
 
 		url = self.OPENDOTA_URL + 'publicMatches?lessthanmatchid='
-		if matches_requested % 100 != 0:
-			raise ValueError("matches_requested should be a multiple of 100")
+		# if matches_requested % 100 != 0:
+		# 	raise ValueError("matches_requested should be a multiple of 100")
 		while matches_found < matches_requested:
 			try:
 				jsons = self.get_public_matches(less_than_match_id)
@@ -107,18 +107,21 @@ class API:
 		
 		if file_outputs:
 			if append:
-				matches_outputf = open(file_outputs[0], 'w+')
-				results_outputf = open(file_outputs[1], 'w+')
+				matches_outputf = open(file_outputs[0], 'r+')
+				results_outputf = open(file_outputs[1], 'r+')
 				old_matches = json.load(matches_outputf)
 				matches_output = matches_output + old_matches
 				old_results = json.load(results_outputf)
 				results_output = results_output + old_results
+				matches_outputf.close()
+				results_outputf.close()
 				
-			else:
-				matches_outputf = open(file_outputs[0], 'w+')
-				results_outputf = open(file_outputs[1], 'w+')
+			matches_outputf = open(file_outputs[0], 'w+')
+			results_outputf = open(file_outputs[1], 'w+')
 			json.dump(matches_output, matches_outputf)
 			json.dump(results_output, results_outputf)
+			matches_outputf.close()
+			results_outputf.close()
 
 		
 		return matches_output, results_output

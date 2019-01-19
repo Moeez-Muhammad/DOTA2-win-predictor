@@ -12,7 +12,9 @@ class API:
 	def __init__(self, apikey=None):
 		if not apikey:
 			self.wait = 2
-		else: wait = 0
+		else: 
+			self.wait = 0.2
+			self.apikey = apikey
 
 	def get_public_matches(self, less_than_match_id=None, mmr_ascending=None, mmr_descending=None):
 		url = self.OPENDOTA_URL + 'publicMatches'
@@ -20,12 +22,14 @@ class API:
 			raise ValueError("mmr_ascending and mmr_descending cannot both be True")
 		payload = {less_than_match_id: less_than_match_id,
 		    mmr_ascending: mmr_ascending, mmr_descending: mmr_descending}
+		if self.apikey:
+			payload["api_key"] = self.apikey
 		if mmr_ascending == True:
 			payload[mmr_ascending] = 1
 		elif mmr_descending == True:
 			payload[mmr_descending] = 1
 		r = requests.get(url, payload)
-		return json.loads(r.content)
+		return json.loads(r.text)
 
 	def get_more_matches(self, less_than_match_id=None, min_mmr=4500, matches_requested=100, columns=['match_id', 'radiant_win', 'avg_mmr', 'radiant_team', 'dire_team']):
 		matches = pd.DataFrame()
@@ -33,8 +37,6 @@ class API:
 		matches_found = 0
 
 		url = self.OPENDOTA_URL + 'publicMatches?lessthanmatchid='
-		# if matches_requested % 100 != 0:
-		# 	raise ValueError("matches_requested should be a multiple of 100")
 		while matches_found < matches_requested:
 			try:
 				jsons = self.get_public_matches(less_than_match_id)
@@ -58,8 +60,9 @@ class API:
 
 	def get_heroes(self):
 		url = self.OPENDOTA_URL + 'heroes'
+		payload = {"api_key": self.apikey}
 		r = requests.get(url)
-		jsons = json.loads(r.content)
+		jsons = json.loads(r.text)
 		self.heroes = jsons
 
 		return jsons

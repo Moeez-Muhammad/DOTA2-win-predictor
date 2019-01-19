@@ -1,6 +1,5 @@
 import requests
 import pandas as pd
-import pandas
 from time import sleep
 import json
 
@@ -41,7 +40,7 @@ class API:
 				jsons = self.get_public_matches(less_than_match_id)
 				current_match_id = jsons[-1]['match_id']
 
-				current_dataframe = pandas.io.json.json_normalize(jsons)
+				current_dataframe = pd.io.json.json_normalize(jsons)
 				current_dataframe = current_dataframe[columns]  # Get only columns specified
 				# Remove low mmr games
 				current_dataframe = current_dataframe.loc[current_dataframe["avg_mmr"] > min_mmr]
@@ -82,8 +81,8 @@ class API:
 	def parse_matches_for_ml(self, matches=None, file_input=None, file_outputs=None, append=False):
 		if file_input:
 			matches_json = json.load(file_input)
-			matches = pandas.io.json.json_normalize(matches_json)
-		elif type(matches) != pandas.core.frame.DataFrame:
+			matches = pd.io.json.json_normalize(matches_json)
+		elif type(matches) != pd.core.frame.DataFrame:
 			raise TypeError("Matches should be pandas DataFrame")
 
 		matches_output = []

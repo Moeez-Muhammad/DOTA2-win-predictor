@@ -44,7 +44,7 @@ dump(random_forest, 'rf.joblib')
 os.system('gsutil cp rf_scores gs://dota2-win-predictor')
 os.system('gsutil cp rf.joblib gs://dota2-win-predictor')
 
-svm = svm.LinearSVC(random_state=0, tol=1e-5)
+svm = svm.LinearSVC(random_state=0, tol=1e-5, C=2.0) # Used as null hypothesis
 svm_scores = cross_val_score(svm, matches, results, cv=10)
 svm = svm.fit(matches_train, results_train)
 with open('svm_scores', 'w+') as svm_file:

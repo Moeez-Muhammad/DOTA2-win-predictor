@@ -60,24 +60,37 @@ class API:
 
 	def get_heroes(self):
 		url = self.OPENDOTA_URL + 'heroes'
-		payload = {"api_key": self.apikey}
+		#if self.apikey:
+		#	payload = {"api_key": self.apikey}
 		r = requests.get(url)
 		jsons = json.loads(r.text)
 		self.heroes = jsons
 
 		return jsons
 
-	def generate_hero_dict(self):
+	def generate_hero_ids_dict(self):
 		'''Generate a dictionary mapping hero ids to 0-based index values'''
+		if not self.heroes:
+			raise NameError(
+			    "Run get_heroes() to generate a json of the heroes first, then run generate_hero_ids_dict()")
+		heroes = self.heroes
+		hero_ids_dict = {}
+		n = 0
+		for hero in heroes:
+			hero_ids_dict[hero["id"]] = n
+			n += 1
+		self.hero_ids_dict = hero_ids_dict
+		return hero_ids_dict
+
+	def generate_hero_dict(self):
+		'''Generate a dictionary mapping hero names to hero ids'''
 		if not self.heroes:
 			raise NameError(
 			    "Run get_heroes() to generate a json of the heroes first, then run generate_hero_dict()")
 		heroes = self.heroes
 		heroes_dict = {}
-		n = 0
 		for hero in heroes:
-			heroes_dict[hero["id"]] = n
-			n += 1
+			heroes_dict[hero["localized_name"]] = hero["id"]
 		self.heroes_dict = heroes_dict
 		return heroes_dict
 
@@ -97,10 +110,10 @@ class API:
 			radiant_team = row.loc["radiant_team"].split(',')
 			dire_team = row.loc["dire_team"].split(',')
 			for hero in radiant_team:
-				hero_index = self.heroes_dict[int(hero)]
+				hero_index = self.hero_ids_dict[int(hero)]
 				ids[hero_index] = 1
 			for hero in dire_team:
-				hero_index = self.heroes_dict[int(hero)] + len(self.heroes)
+				hero_index = self.hero_ids_dict[int(hero)] + len(self.heroes)
 				ids[hero_index] = 1
 			matches_output.append(ids)
 			if row.loc["radiant_win"] == True:
